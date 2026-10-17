@@ -1,0 +1,62 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}My Jobs{% endblock %}
+
+{% block content %}
+<div class="section-head">
+    <div>
+        <h1>My job postings</h1>
+        <p class="subtitle">Manage the jobs you've posted and track applicants.</p>
+    </div>
+    <a href="{% url 'job_create' %}" class="btn btn-primary">+ Post a job</a>
+</div>
+
+{% if my_jobs %}
+    <div class="card table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Job</th>
+                    <th>Location</th>
+                    <th>Posted</th>
+                    <th>Applicants</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in my_jobs %}
+                    <tr>
+                        <td>
+                            <div class="cell-job">
+                                <div class="company-logo">{{ job.company_name|first|upper }}</div>
+                                <div>
+                                    <div class="job-title"><a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a></div>
+                                    <p class="job-company">{{ job.company_name }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ job.location }}</td>
+                        <td>{{ job.date_posted|date:"M j, Y" }}</td>
+                        <td>
+                            <a href="{% url 'job_applicants' job.pk %}" class="badge {% if job.applicant_count %}badge-brand{% endif %}">
+                                {% include 'jobs/_icon.html' with name='users' %}{{ job.applicant_count }}
+                            </a>
+                            {% if job.new_count %}<span class="status status-applied">{{ job.new_count }} new</span>{% endif %}
+                        </td>
+                        <td class="text-right" style="white-space:nowrap">
+                            <a href="{% url 'job_applicants' job.pk %}" class="btn btn-outline btn-sm">Applicants</a>
+                            <a href="{% url 'job_update' job.pk %}" class="btn btn-outline btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        <h3>You haven't posted any jobs yet</h3>
+        <p>Post your first job and start receiving applications.</p>
+        <a href="{% url 'job_create' %}" class="btn btn-primary">Post a job</a>
+    </div>
+{% endif %}
+{% endblock %}

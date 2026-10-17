@@ -1,0 +1,25 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}{% if object %}Edit Job{% else %}Post a Job{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card" style="margin:0 auto">
+    <div class="section-head">
+        <div>
+            <h1>{% if object %}Edit job{% else %}Post a new job{% endif %}</h1>
+            <p class="subtitle">
+                {% if object %}Update the details for "{{ object.title }}".{% else %}Fill in the details below to reach qualified candidates.{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="card card-body">
+        {% csrf_token %}
+        {% include 'jobs/_form_fields.html' %}
+        <div class="form-actions">
+            <a href="{% if object %}{% url 'job_detail' object.pk %}{% else %}{% url 'my_jobs' %}{% endif %}" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary">{% if object %}Save changes{% else %}Publish job{% endif %}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

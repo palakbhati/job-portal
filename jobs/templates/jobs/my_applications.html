@@ -1,0 +1,44 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<div class="section-head">
+    <div>
+        <h1>My applications</h1>
+        <p class="subtitle">
+            You've applied to {{ my_applications|length }} job{{ my_applications|length|pluralize }}.
+        </p>
+    </div>
+    <a href="{% url 'job_list' %}" class="btn btn-outline">Browse more jobs</a>
+</div>
+
+<div class="job-list">
+    {% for application in my_applications %}
+        {% with job=application.job %}
+        <article class="card job-card">
+            <div class="company-logo">{{ job.company_name|first|upper }}</div>
+            <div class="job-card-main">
+                <h2 class="job-title"><a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a></h2>
+                <p class="job-company">{{ job.company_name }}</p>
+                <div class="job-meta">
+                    <span>{% include 'jobs/_icon.html' with name='pin' %}{{ job.location }}</span>
+                    <span>{% include 'jobs/_icon.html' with name='money' %}{{ job.salary|floatformat:"0g" }}</span>
+                </div>
+            </div>
+            <div class="job-card-side">
+                <span class="status status-{{ application.status }}">{{ application.get_status_display }}</span>
+                <span class="posted">Applied {{ application.date_applied|date:"M j, Y" }}</span>
+                <a href="{% url 'download_resume' application.pk %}" class="btn btn-outline btn-sm">View resume</a>
+            </div>
+        </article>
+        {% endwith %}
+    {% empty %}
+        <div class="card empty">
+            <h3>No applications yet</h3>
+            <p>When you apply to jobs, they'll show up here.</p>
+            <a href="{% url 'job_list' %}" class="btn btn-primary">Find jobs</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Applicants · {{ job.title }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="{% url 'my_jobs' %}">My Jobs</a> &rsaquo; {{ job.title }}
+</nav>
+
+<div class="section-head">
+    <div>
+        <h1>Applicants for {{ job.title }}</h1>
+        <p class="subtitle">{{ total_count }} total applicant{{ total_count|pluralize }} · Review resumes and update each candidate's status.</p>
+    </div>
+    <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline">View job post</a>
+</div>
+
+<nav class="tabs">
+    <a href="{% url 'job_applicants' job.pk %}" class="{% if not current_status %}active{% endif %}">
+        All <span class="count">{{ total_count }}</span>
+    </a>
+    {% for value, label, count in status_counts %}
+        <a href="?status={{ value }}" class="{% if current_status == value %}active{% endif %}">
+            {{ label }} <span class="count">{{ count }}</span>
+        </a>
+    {% endfor %}
+</nav>
+
+<div class="applicant-list">
+    {% for application in applications %}
+        <article class="card applicant-card">
+            <div class="applicant-head">
+                <span class="avatar">{{ application.applicant.username|first|upper }}</span>
+                <div class="info">
+                    <div class="name">{{ application.applicant.get_full_name|default:application.applicant.username }}</div>
+                    <div class="sub">
+                        {% if application.applicant.email %}<a href="mailto:{{ application.applicant.email }}">{{ application.applicant.email }}</a> · {% endif %}
+                        Applied {{ application.date_applied|date:"M j, Y" }}
+                    </div>
+                </div>
+                <span class="status status-{{ application.status }}">{{ application.get_status_display }}</span>
+                <div class="applicant-actions">
+                    <a href="{% url 'download_resume' application.pk %}" class="btn btn-outline btn-sm">Resume</a>
+                    <form method="post" action="{% url 'update_application_status' application.pk %}">
+                        {% csrf_token %}
+                        <select name="status" aria-label="Status">
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </form>
+                </div>
+            </div>
+            {% if application.cover_letter %}
+                <details class="cover-letter">
+                    <summary>Cover letter</summary>
+                    {{ application.cover_letter }}
+                </details>
+            {% endif %}
+        </article>
+    {% empty %}
+        <div class="card empty">
+            {% if current_status %}
+                <h3>No applicants with this status</h3>
+                <a href="{% url 'job_applicants' job.pk %}" class="btn btn-outline">Show all applicants</a>
+            {% else %}
+                <h3>No applicants yet</h3>
+                <p>Applications will appear here as candidates apply.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

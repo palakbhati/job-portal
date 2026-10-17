@@ -1,0 +1,39 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Apply for {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="form-card" style="margin:0 auto">
+    <nav class="breadcrumb">
+        <a href="{% url 'job_list' %}">Jobs</a> &rsaquo;
+        <a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a> &rsaquo; Apply
+    </nav>
+
+    <div class="section-head">
+        <div>
+            <h1>Submit your application</h1>
+            <p class="subtitle">Your resume and cover letter will be shared only with {{ job.company_name }}.</p>
+        </div>
+    </div>
+
+    <div class="card apply-job">
+        <div class="company-logo">{{ job.company_name|first|upper }}</div>
+        <div>
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-meta">
+                <span>{% include 'jobs/_icon.html' with name='building' %}{{ job.company_name }}</span>
+                <span>{% include 'jobs/_icon.html' with name='pin' %}{{ job.location }}</span>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="card card-body">
+        {% csrf_token %}
+        {% include 'jobs/_form_fields.html' %}
+        <div class="form-actions">
+            <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary">Submit application</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Find your next job{% endblock %} · JobPortal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'jobs/css/style.css' %}">
+</head>
+<body>
+    {% with url_name=request.resolver_match.url_name %}
+    <header class="navbar">
+        <div class="container">
+            <a href="{% url 'job_list' %}" class="brand">
+                <span class="brand-mark">J</span> JobPortal
+            </a>
+            <nav class="nav-links">
+                <a href="{% url 'job_list' %}" class="{% if url_name == 'job_list' %}active{% endif %}">Find Jobs</a>
+                {% if user.is_authenticated %}
+                    {% if user.is_employer %}
+                        <a href="{% url 'my_jobs' %}" class="{% if url_name == 'my_jobs' or url_name == 'job_applicants' %}active{% endif %}">My Jobs</a>
+                        <a href="{% url 'job_create' %}" class="btn btn-primary btn-sm" style="color:#fff">Post a Job</a>
+                    {% else %}
+                        <a href="{% url 'my_applications' %}" class="{% if url_name == 'my_applications' %}active{% endif %}">My Applications</a>
+                    {% endif %}
+                    <div class="nav-user">
+                        <span class="avatar">{{ user.username|first|upper }}</span>
+                        <span class="username">{{ user.username }} <span class="badge">{{ user.get_role_display }}</span></span>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="link-button">Log out</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="{% if url_name == 'login' %}active{% endif %}">Log in</a>
+                    <a href="{% url 'signup' %}" class="btn btn-primary btn-sm" style="color:#fff">Sign up</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    {% endwith %}
+
+    {% block hero %}{% endblock %}
+
+    <main class="page">
+        <div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span>&copy; {% now "Y" %} JobPortal. All rights reserved.</span>
+            <span>Connecting talent with opportunity.</span>
+        </div>
+    </footer>
+</body>
+</html>

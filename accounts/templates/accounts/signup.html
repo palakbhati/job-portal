@@ -1,0 +1,20 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="card-body">
+            <h1>Create your account</h1>
+            <p class="subtitle">Join to find great jobs or hire top talent.</p>
+            <form method="post">
+                {% csrf_token %}
+                {% include 'jobs/_form_fields.html' %}
+                <button type="submit" class="btn btn-primary btn-block">Create account</button>
+            </form>
+            <p class="auth-footer">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

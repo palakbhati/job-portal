@@ -1,0 +1,84 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}{{ job.title }} at {{ job.company_name }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="{% url 'job_list' %}">Jobs</a> &rsaquo; {{ job.title }}
+</nav>
+
+<div class="detail-grid">
+    <article class="card card-body">
+        <div class="detail-header">
+            <div class="company-logo lg">{{ job.company_name|first|upper }}</div>
+            <div>
+                <h1>{{ job.title }}</h1>
+                <p class="job-company">{{ job.company_name }}</p>
+                <div class="job-meta">
+                    <span>{% include 'jobs/_icon.html' with name='pin' %}{{ job.location }}</span>
+                    <span>{% include 'jobs/_icon.html' with name='calendar' %}Posted {{ job.date_posted|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="detail-section">
+            <h2>Job description</h2>
+            <div class="description">{{ job.description|linebreaks }}</div>
+        </section>
+    </article>
+
+    <aside class="sidebar">
+        <div class="card card-body">
+            {% if user.is_authenticated %}
+                {% if job.posted_by == user %}
+                    <a href="{% url 'job_applicants' job.pk %}" class="btn btn-primary btn-block">
+                        View {{ applicant_count }} applicant{{ applicant_count|pluralize }}
+                    </a>
+                    <a href="{% url 'job_update' job.pk %}" class="btn btn-outline btn-block" style="margin-top:8px">Edit this job</a>
+                {% elif application %}
+                    <button class="btn btn-block" disabled>
+                        {% include 'jobs/_icon.html' with name='check' %} Applied
+                    </button>
+                    <p class="sidebar-note">
+                        Status: <span class="status status-{{ application.status }}">{{ application.get_status_display }}</span>
+                    </p>
+                {% elif user.is_seeker %}
+                    <a href="{% url 'apply_to_job' job.pk %}" class="btn btn-primary btn-block">Apply now</a>
+                    <p class="sidebar-note">You'll upload your resume on the next step.</p>
+                {% else %}
+                    <p class="sidebar-note" style="margin:0">Log in with a job seeker account to apply.</p>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-block">Log in to apply</a>
+                <p class="sidebar-note">New here? <a href="{% url 'signup' %}">Create an account</a></p>
+            {% endif %}
+        </div>
+
+        <div class="card card-body">
+            <h2 style="font-size:16px; margin-bottom:16px">Job overview</h2>
+            <ul class="overview">
+                <li>
+                    <span class="icon-wrap">{% include 'jobs/_icon.html' with name='money' %}</span>
+                    <div><span class="label">Salary</span><span class="value">{{ job.salary|floatformat:"0g" }}</span></div>
+                </li>
+                <li>
+                    <span class="icon-wrap">{% include 'jobs/_icon.html' with name='pin' %}</span>
+                    <div><span class="label">Location</span><span class="value">{{ job.location }}</span></div>
+                </li>
+                <li>
+                    <span class="icon-wrap">{% include 'jobs/_icon.html' with name='building' %}</span>
+                    <div><span class="label">Company</span><span class="value">{{ job.company_name }}</span></div>
+                </li>
+                <li>
+                    <span class="icon-wrap">{% include 'jobs/_icon.html' with name='calendar' %}</span>
+                    <div><span class="label">Date posted</span><span class="value">{{ job.date_posted|date:"M j, Y" }}</span></div>
+                </li>
+                <li>
+                    <span class="icon-wrap">{% include 'jobs/_icon.html' with name='user' %}</span>
+                    <div><span class="label">Posted by</span><span class="value">{{ job.posted_by }}</span></div>
+                </li>
+            </ul>
+        </div>
+    </aside>
+</div>
+{% endblock %}

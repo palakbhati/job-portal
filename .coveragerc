@@ -1,0 +1,12 @@
+[run]
+source = jobs, accounts, jobportal
+omit =
+    */migrations/*
+    */tests/*
+    jobportal/asgi.py
+    jobportal/wsgi.py
+    jobportal/settings_test.py
+
+[report]
+show_missing = True
+skip_covered = False

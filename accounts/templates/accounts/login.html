@@ -1,0 +1,21 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="card-body">
+            <h1>Welcome back</h1>
+            <p class="subtitle">Log in to apply for jobs and manage your postings.</p>
+            <form method="post">
+                {% csrf_token %}
+                {% include 'jobs/_form_fields.html' %}
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            </form>
+            <p class="auth-footer">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

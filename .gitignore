@@ -1,0 +1,17 @@
+# Secrets and local data
+.env
+db.sqlite3
+media/
+
+# Python
+__pycache__/
+*.py[cod]
+env_jobportal/
+.venv/
+venv/
+
+# Build / tooling
+staticfiles/
+.coverage
+htmlcov/
+.pytest_cache/

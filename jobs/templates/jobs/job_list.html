@@ -1,0 +1,82 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}Find Jobs{% endblock %}
+
+{% block hero %}
+<section class="hero">
+    <div class="container">
+        <h1>Find the job that fits your life</h1>
+        <p>Browse opportunities from companies hiring right now.</p>
+        <form method="get" action="{% url 'job_list' %}" class="search-bar">
+            <label class="search-field">
+                {% include 'jobs/_icon.html' with name='search' %}
+                <input type="text" name="q" value="{{ q }}" placeholder="Job title, company or keyword" aria-label="Keyword">
+            </label>
+            <label class="search-field">
+                {% include 'jobs/_icon.html' with name='pin' %}
+                <input type="text" name="location" value="{{ location }}" placeholder="City or remote" aria-label="Location">
+            </label>
+            <button type="submit" class="btn btn-primary">Search jobs</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="section-head">
+    <p class="result-count">
+        <strong>{{ paginator.count }}</strong> job{{ paginator.count|pluralize }}
+        {% if q or location %}
+            found{% if q %} for "<strong>{{ q }}</strong>"{% endif %}{% if location %} in <strong>{{ location }}</strong>{% endif %}
+            · <a href="{% url 'job_list' %}">Clear filters</a>
+        {% else %}
+            available
+        {% endif %}
+    </p>
+</div>
+
+<div class="job-list">
+    {% for job in all_jobs %}
+        <article class="card job-card">
+            <div class="company-logo">{{ job.company_name|first|upper }}</div>
+            <div class="job-card-main">
+                <h2 class="job-title"><a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a></h2>
+                <p class="job-company">{{ job.company_name }}</p>
+                <div class="job-meta">
+                    <span>{% include 'jobs/_icon.html' with name='pin' %}{{ job.location }}</span>
+                    <span>{% include 'jobs/_icon.html' with name='money' %}{{ job.salary|floatformat:"0g" }}</span>
+                </div>
+            </div>
+            <div class="job-card-side">
+                <span class="posted">{{ job.date_posted|timesince }} ago</span>
+                <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline btn-sm">View job</a>
+            </div>
+        </article>
+    {% empty %}
+        <div class="card empty">
+            <h3>No jobs found</h3>
+            {% if q or location %}
+                <p>Try different keywords or a broader location.</p>
+                <a href="{% url 'job_list' %}" class="btn btn-outline">Clear filters</a>
+            {% else %}
+                <p>No jobs have been posted yet. Check back soon!</p>
+                {% if user.is_employer %}
+                    <a href="{% url 'job_create' %}" class="btn btn-primary">Post a job</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+    <nav class="pagination">
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline btn-sm" href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}&location={{ location|urlencode }}">&larr; Previous</a>
+        {% endif %}
+        <span class="current">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline btn-sm" href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}&location={{ location|urlencode }}">Next &rarr;</a>
+        {% endif %}
+    </nav>
+{% endif %}
+{% endblock %}
