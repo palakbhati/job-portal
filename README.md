@@ -4,7 +4,7 @@ A full-stack job board built with Django. Employers post jobs and review
 applicants; job seekers search, apply with a resume and track their
 application status.
 
-**Live demo:** _add your Cloud Run URL here_
+**Live demo:** https://jobportal-534831126239.us-central1.run.app/
 
 <!--
 Add screenshots after deploying, e.g.:
