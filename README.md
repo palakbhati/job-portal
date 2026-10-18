@@ -6,11 +6,7 @@ application status.
 
 **Live demo:** https://jobportal-534831126239.us-central1.run.app/
 
-<!--
-Add screenshots after deploying, e.g.:
-![Job listings](docs/screenshots/job-list.png)
-![Applicants dashboard](docs/screenshots/applicants.png)
--->
+<!--job_portal.png-->
 
 ## Features
 
